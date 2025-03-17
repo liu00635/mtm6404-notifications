@@ -1,32 +1,47 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
 import './App.css'
+import notificationsData from "./notifications";
+import "bootstrap/dist/css/bootstrap.min.css";
+
+
+function NotificationItem({ notification, onClear }) {
+  return (
+    <div className="alert alert-info d-flex justify-content-between">
+      <span>{notification.message}</span>
+      <button className="btn btn-primary btn-sm ms-3" onClick={() => onClear(notification.id)}>Clear</button>
+    </div>
+  );
+}
+
+function NotificationList({ children }) {
+  return <div className="container mt-3">{children}</div>
+}
+
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [notifications, setNotifications] = useState(notificationsData)
+
+  const clearNotification = (id) => {
+    setNotifications(notifications.filter((n) => n.id !== id));
+  };
+
+  const clearAllNotifications = () => {
+    setNotifications([]);
+  }
 
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+    <div className="App container mt-4">
+      <h1>Notifications ({notifications.length})</h1>
+      <NotificationList>
+        {notifications.map((notification) => (
+          <NotificationItem
+            key={notification.id}
+            notification={notification}
+            onClear={clearNotification}
+          />
+        ))}
+      </NotificationList>
+      <button className="btn btn-secondary" onClick={clearAllNotifications} disabled={notifications.length === 0}>Clear All</button>
     </div>
   )
 }
